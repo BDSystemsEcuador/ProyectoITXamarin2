@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Http;
 using Newtonsoft.Json;
 using ProyectoITXamarin.DataModel;
+using ProyectoITXamarin.Data;
 
 namespace ProyectoITXamarin
 {
@@ -33,12 +34,28 @@ namespace ProyectoITXamarin
                 grid.ItemsSource = resultado;
             }
         }
-            public MainPage()
+        public async void TraerDatos1()
+        {
+            var request = new HttpRequestMessage();
+            request.RequestUri = new Uri("https://api.jsonbin.io/b/606f75dd9c59a9732caff265");
+            request.Method = HttpMethod.Get;
+            request.Headers.Add("Accpet", "application/json");
+            var client = new HttpClient();
+            HttpResponseMessage response = await client.SendAsync(request);
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                string content = await response.Content.ReadAsStringAsync();
+                var resultado = JsonConvert.DeserializeObject<List<Factura>>(content);
+                grid1.ItemsSource = resultado;
+            }
+        }
+        public MainPage()
         {
             InitializeComponent();
             DevExpress.XamarinForms.DataGrid.Initializer.Init();
             DevExpress.XamarinForms.Editors.Initializer.Init();
             TraerDatos();
+            TraerDatos1();
         }
         public bool ShowAutoFilterRow { get; set; }
     }
